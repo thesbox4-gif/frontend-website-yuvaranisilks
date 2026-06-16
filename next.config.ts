@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'thesbox.blob.core.windows.net' },
     ],
   },
   experimental: { serverActions: { allowedOrigins: ['localhost:3000'] } },
