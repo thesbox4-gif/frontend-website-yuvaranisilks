@@ -7,11 +7,6 @@ import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
 import type { Category } from '@/types'
 
-const PRODUCT_TYPES = [
-  { value: 'saree', label: 'Sarees' },
-  { value: 'jewellery', label: 'Jewellery' },
-]
-
 const SORT_OPTIONS = [
   { value: '', label: 'Relevance' },
   { value: 'price_asc', label: 'Price: Low to High' },
@@ -42,6 +37,10 @@ export function CategoryFilter() {
   const searchParams = useSearchParams()
   const [categories, setCategories] = useState<Category[]>([])
   const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const rootCategories = categories
+    .filter((c) => !c.parent_id)
+    .sort((a, b) => (a.display_order ?? 99) - (b.display_order ?? 99))
 
   useEffect(() => {
     api.get<Category[]>('/api/categories')
@@ -124,23 +123,22 @@ export function CategoryFilter() {
         <div>
           <SectionTitle>Categories</SectionTitle>
           <div className="space-y-4">
-            {PRODUCT_TYPES.map((pt) => {
-              const rootCat = categories.find((c) => c.slug === pt.value)
-              const subCats = rootCat ? categories.filter((c) => c.parent_id === rootCat.id) : []
+            {rootCategories.map((rootCat) => {
+              const subCats = categories.filter((c) => c.parent_id === rootCat.id)
               const subCatIds = subCats.map((c) => c.id)
-              const isTypeSelected = selectedTypes.includes(pt.value)
+              const isTypeSelected = selectedTypes.includes(rootCat.slug)
 
               return (
-                <div key={pt.value} className="space-y-2.5">
+                <div key={rootCat.id} className="space-y-2.5">
                   <label className="flex items-center gap-2.5 cursor-pointer group">
                     <input
                       type="checkbox"
                       checked={isTypeSelected}
-                      onChange={() => toggleType(pt.value, subCatIds)}
+                      onChange={() => toggleType(rootCat.slug, subCatIds)}
                       className="h-4 w-4 rounded border-neutral-300 text-brand focus:ring-brand/30"
                     />
                     <span className="text-sm font-medium text-neutral-700 group-hover:text-ink transition-colors">
-                      {pt.label}
+                      {rootCat.name}
                     </span>
                   </label>
 
@@ -152,7 +150,7 @@ export function CategoryFilter() {
                         return (
                           <button
                             key={sub.id}
-                            onClick={() => toggleSubcategory(sub.id, pt.value)}
+                            onClick={() => toggleSubcategory(sub.id, rootCat.slug)}
                             className={cn(
                               'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] border transition-all',
                               isSubSelected

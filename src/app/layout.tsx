@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 import './globals.css'
 import { Providers } from './providers'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
+import { ConditionalLayout } from '@/components/layout/ConditionalLayout'
 import { Toaster } from '@/components/ui/Toaster'
 import { BRAND } from '@/lib/brand'
 import { Plus_Jakarta_Sans, Poppins } from 'next/font/google'
@@ -39,9 +38,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${plusJakartaSans.variable} ${poppins.variable}`}>
       <body className="w-full min-w-0 overflow-x-hidden">
         <Providers>
-          <Navbar />
-          <main className="min-h-screen w-full min-w-0 overflow-x-hidden">{children}</main>
-          <Footer />
+          {/*
+            ConditionalLayout renders Navbar+Footer for storefront routes only.
+            /admin/* routes get their own shell from src/app/admin/layout.tsx.
+          */}
+          <ConditionalLayout>
+            {children}
+          </ConditionalLayout>
           <Toaster />
         </Providers>
       </body>

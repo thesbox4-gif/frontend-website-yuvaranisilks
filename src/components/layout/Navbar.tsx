@@ -21,16 +21,13 @@ import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import type { Category } from '@/types'
 import { BrandLogo } from '@/components/brand/BrandLogo'
-
-const NAV_TYPES = [
-  { slug: 'saree', label: 'Sarees' },
-  { slug: 'jewellery', label: 'Jewellery' },
-] as const
+import { MOCK_CATEGORIES } from '@/data/mock/categories'
 
 export function Navbar() {
   const router = useRouter()
   const [, startTransition] = useTransition()
   const [categories, setCategories] = useState<Category[]>([])
+  const [rootCategories, setRootCategories] = useState<Category[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchMounted, setSearchMounted] = useState(false)
@@ -40,9 +37,24 @@ export function Navbar() {
   const { user, clearAuth } = useAuthStore()
 
   useEffect(() => {
-    api.get<Category[]>('/api/categories')
-      .then(setCategories)
-      .catch((err) => console.error('Failed to load categories', err))
+    api
+      .get<Category[]>('/api/categories')
+      .then((data) => {
+        const all = Array.isArray(data) ? data : []
+        setCategories(all)
+        // Root categories: no parent_id, sorted by display_order
+        const roots = all
+          .filter((c) => !c.parent_id)
+          .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+        setRootCategories(roots)
+      })
+      .catch(() => {
+        setCategories(MOCK_CATEGORIES)
+        const roots = MOCK_CATEGORIES
+          .filter((c) => !c.parent_id)
+          .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+        setRootCategories(roots)
+      })
   }, [])
 
   useEffect(() => {
@@ -61,9 +73,8 @@ export function Navbar() {
   const cartCount = (items ?? []).reduce((sum, i) => sum + i.quantity, 0)
   const wishlistCount = (productIds ?? []).length
 
-  function subsFor(slug: string) {
-    const root = categories.find((c) => c.slug === slug)
-    return root ? categories.filter((c) => c.parent_id === root.id) : []
+  function childrenOf(parentId: string) {
+    return categories.filter((c) => c.parent_id === parentId)
   }
 
   function handleSearch(e: React.FormEvent) {
@@ -91,6 +102,7 @@ export function Navbar() {
       <header className="sticky top-0 z-50 w-full min-w-0 bg-[var(--color-background)]/85 backdrop-blur-md border-b border-brand-accent/15 transition-all duration-150 pt-safe">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-w-0">
           <div className="relative flex items-center justify-between h-16 sm:h-[72px] gap-2 sm:gap-4 min-w-0">
+
             {/* Mobile menu toggle */}
             <button
               onClick={() => setMobileOpen((v) => !v)}
@@ -105,18 +117,20 @@ export function Navbar() {
               <BrandLogo showTagline={false} className="shrink min-w-0" imageClassName="h-7 sm:h-9 max-w-[7.5rem] sm:max-w-none" />
             </div>
 
-            {/* Desktop nav */}
+            {/* Desktop nav — dynamic root categories */}
             <nav className="hidden md:flex items-center gap-8 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink/80">
-              {NAV_TYPES.map((t) => {
-                const subs = subsFor(t.slug)
+              {rootCategories.map((root) => {
+                const subs = childrenOf(root.id)
                 return (
-                  <div key={t.slug} className="relative group py-6">
+                  <div key={root.id} className="relative group py-6">
                     <Link
-                      href={`/products?type=${t.slug}`}
+                      href={`/products?type=${root.slug}`}
                       className="flex items-center gap-1 hover:text-brand transition-colors duration-300 relative py-1 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-0 after:bg-brand hover:after:w-full after:transition-all after:duration-300"
                     >
-                      {t.label}
-                      <ChevronDown className="h-3 w-3 text-neutral-400 group-hover:text-brand group-hover:rotate-180 transition-all duration-300" />
+                      {root.name}
+                      {subs.length > 0 && (
+                        <ChevronDown className="h-3 w-3 text-neutral-400 group-hover:text-brand group-hover:rotate-180 transition-all duration-300" />
+                      )}
                     </Link>
                     {subs.length > 0 && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 hidden group-hover:block pt-0 w-56 z-50">
@@ -124,7 +138,7 @@ export function Navbar() {
                           {subs.map((sub) => (
                             <Link
                               key={sub.id}
-                              href={`/products?type=${t.slug}&category=${sub.id}`}
+                              href={`/products?type=${root.slug}&category=${sub.id}`}
                               className="block px-4 py-2 text-[12px] text-ink/80 hover:bg-brand-soft/60 hover:text-brand font-medium normal-case tracking-normal transition-colors"
                             >
                               {sub.name}
@@ -132,10 +146,10 @@ export function Navbar() {
                           ))}
                           <div className="my-1.5 h-px bg-brand-accent/15" />
                           <Link
-                            href={`/products?type=${t.slug}`}
+                            href={`/products?type=${root.slug}`}
                             className="block px-4 py-2 text-[11.5px] font-bold text-brand hover:bg-brand-soft/60 normal-case tracking-wide transition-colors"
                           >
-                            View all {t.label}
+                            View all {root.name}
                           </Link>
                         </div>
                       </div>
@@ -147,19 +161,19 @@ export function Navbar() {
 
             {/* Search */}
             {searchMounted ? (
-            <form onSubmit={handleSearch} className="flex-1 max-w-xs hidden lg:flex" suppressHydrationWarning>
-              <div className="relative w-full border-b border-neutral-300/60 focus-within:border-brand transition-colors duration-300 py-1">
-                <Search className="absolute left-1 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
-                <input
-                  type="text"
-                  suppressHydrationWarning
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search sarees, jewellery..."
-                  className="w-full pl-7 pr-3 text-[12px] bg-transparent focus:outline-none tracking-wide text-ink placeholder-neutral-400"
-                />
-              </div>
-            </form>
+              <form onSubmit={handleSearch} className="flex-1 max-w-xs hidden lg:flex" suppressHydrationWarning>
+                <div className="relative w-full border-b border-neutral-300/60 focus-within:border-brand transition-colors duration-300 py-1">
+                  <Search className="absolute left-1 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
+                  <input
+                    type="text"
+                    suppressHydrationWarning
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search sarees, jewellery..."
+                    className="w-full pl-7 pr-3 text-[12px] bg-transparent focus:outline-none tracking-wide text-ink placeholder-neutral-400"
+                  />
+                </div>
+              </form>
             ) : (
               <div className="flex-1 max-w-xs hidden lg:block h-8" aria-hidden />
             )}
@@ -233,6 +247,17 @@ export function Navbar() {
                           My Wishlist
                         </Link>
                       </DropdownMenu.Item>
+                      {(user.role === 'admin' || user.role === 'staff') && (
+                        <DropdownMenu.Item asChild>
+                          <Link
+                            href="/admin"
+                            className="flex items-center gap-2.5 px-4 py-2 text-[12.5px] text-ink/80 hover:bg-brand-soft/60 hover:text-brand cursor-pointer outline-none transition-colors"
+                          >
+                            <Package className="h-4 w-4 text-neutral-400" />
+                            Admin Dashboard
+                          </Link>
+                        </DropdownMenu.Item>
+                      )}
                       <DropdownMenu.Separator className="my-1.5 h-px bg-brand-accent/15" />
                       <DropdownMenu.Item
                         onSelect={handleLogout}
@@ -262,35 +287,35 @@ export function Navbar() {
           <div className="md:hidden border-t border-brand-accent/15 bg-background/95 backdrop-blur-md animate-fade-in max-h-[min(70vh,32rem)] overflow-y-auto overscroll-contain">
             <div className="px-4 py-5 pb-safe space-y-5">
               {searchMounted && (
-              <form onSubmit={handleSearch} suppressHydrationWarning>
-                <div className="relative border-b border-neutral-300/60 focus-within:border-brand py-1">
-                  <Search className="absolute left-1 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                  <input
-                    type="text"
-                    suppressHydrationWarning
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search products..."
-                    className="w-full pl-7 pr-3 text-sm bg-transparent focus:outline-none text-ink placeholder-neutral-400"
-                  />
-                </div>
-              </form>
+                <form onSubmit={handleSearch} suppressHydrationWarning>
+                  <div className="relative border-b border-neutral-300/60 focus-within:border-brand py-1">
+                    <Search className="absolute left-1 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                    <input
+                      type="text"
+                      suppressHydrationWarning
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search products..."
+                      className="w-full pl-7 pr-3 text-sm bg-transparent focus:outline-none text-ink placeholder-neutral-400"
+                    />
+                  </div>
+                </form>
               )}
               <div className="space-y-3">
-                {NAV_TYPES.map((t) => (
-                  <div key={t.slug} className="border-b border-brand-accent/10 pb-3 last:border-0 last:pb-0">
+                {rootCategories.map((root) => (
+                  <div key={root.id} className="border-b border-brand-accent/10 pb-3 last:border-0 last:pb-0">
                     <Link
-                      href={`/products?type=${t.slug}`}
+                      href={`/products?type=${root.slug}`}
                       onClick={() => setMobileOpen(false)}
                       className="block text-[12px] font-bold uppercase tracking-wider text-ink hover:text-brand"
                     >
-                      {t.label}
+                      {root.name}
                     </Link>
                     <div className="flex flex-wrap gap-2 mt-2.5">
-                      {subsFor(t.slug).map((sub) => (
+                      {childrenOf(root.id).map((sub) => (
                         <Link
                           key={sub.id}
-                          href={`/products?type=${t.slug}&category=${sub.id}`}
+                          href={`/products?type=${root.slug}&category=${sub.id}`}
                           onClick={() => setMobileOpen(false)}
                           className="px-3 py-1.5 text-xs text-ink/80 bg-neutral-100/60 hover:bg-brand-soft/50 rounded-full border border-neutral-200/50"
                         >

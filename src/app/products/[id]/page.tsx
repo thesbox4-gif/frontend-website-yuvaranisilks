@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { api } from '@/lib/api'
 import { ImageGallery } from '@/components/shop/ImageGallery'
 import { AddToCartSection } from './AddToCartSection'
+import { WhatsAppEnquire } from '@/components/shop/WhatsAppEnquire'
 import { formatPrice, discountedPrice, cn } from '@/lib/utils'
 import { resolveColorHex } from '@/lib/colors'
 import type { Product } from '@/types'
@@ -121,6 +122,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
           {/* Add to cart section */}
           <AddToCartSection product={product} />
 
+          {/* WhatsApp enquiry */}
+          <WhatsAppEnquire product={product} />
+
           {/* Assurances */}
           <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-2">
             {ASSURANCES.map(({ icon: Icon, label, sub }) => (
@@ -139,6 +143,75 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 Description
               </h2>
               <p className="text-sm text-neutral-600 leading-relaxed">{product.description}</p>
+            </div>
+          )}
+
+          {/* Type-specific product attributes */}
+          {product.type === 'saree' && (product.fabric || product.color || product.occasion || product.blouse_included !== undefined) && (
+            <div className="pt-2">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink mb-3">
+                Saree Details
+              </h2>
+              <dl className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
+                {product.fabric && (
+                  <>
+                    <dt className="text-neutral-500">Fabric</dt>
+                    <dd className="text-neutral-800 font-medium capitalize">{product.fabric}</dd>
+                  </>
+                )}
+                {product.color && (
+                  <>
+                    <dt className="text-neutral-500">Colour</dt>
+                    <dd className="text-neutral-800 font-medium capitalize">{product.color}</dd>
+                  </>
+                )}
+                {product.occasion && (
+                  <>
+                    <dt className="text-neutral-500">Occasion</dt>
+                    <dd className="text-neutral-800 font-medium capitalize">{product.occasion}</dd>
+                  </>
+                )}
+                {product.blouse_included !== undefined && (
+                  <>
+                    <dt className="text-neutral-500">Blouse Included</dt>
+                    <dd className="text-neutral-800 font-medium">{product.blouse_included ? 'Yes' : 'No'}</dd>
+                  </>
+                )}
+              </dl>
+            </div>
+          )}
+
+          {product.type === 'jewellery' && (product.material || product.weight || product.jewellery_type || product.occasion) && (
+            <div className="pt-2">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink mb-3">
+                Jewellery Details
+              </h2>
+              <dl className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
+                {product.material && (
+                  <>
+                    <dt className="text-neutral-500">Material</dt>
+                    <dd className="text-neutral-800 font-medium capitalize">{product.material}</dd>
+                  </>
+                )}
+                {product.weight && (
+                  <>
+                    <dt className="text-neutral-500">Weight</dt>
+                    <dd className="text-neutral-800 font-medium">{product.weight}</dd>
+                  </>
+                )}
+                {product.jewellery_type && (
+                  <>
+                    <dt className="text-neutral-500">Type</dt>
+                    <dd className="text-neutral-800 font-medium capitalize">{product.jewellery_type}</dd>
+                  </>
+                )}
+                {product.occasion && (
+                  <>
+                    <dt className="text-neutral-500">Occasion</dt>
+                    <dd className="text-neutral-800 font-medium capitalize">{product.occasion}</dd>
+                  </>
+                )}
+              </dl>
             </div>
           )}
 

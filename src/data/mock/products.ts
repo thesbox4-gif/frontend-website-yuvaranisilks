@@ -1,0 +1,265 @@
+import type { Product } from '@/types'
+import { MOCK_CATEGORIES } from './categories'
+
+const S = 'https://images.unsplash.com'
+
+const img = (id: string, w = 600) =>
+  ({ url: `${S}/${id}?w=${w}&auto=format&fit=crop`, is_primary: true })
+
+const catSaree = MOCK_CATEGORIES.find((c) => c.id === 'cat-saree')!
+const catJwl = MOCK_CATEGORIES.find((c) => c.id === 'cat-jewellery')!
+const catKanchi = MOCK_CATEGORIES.find((c) => c.id === 'cat-kanchipuram')!
+const catBridalSaree = MOCK_CATEGORIES.find((c) => c.id === 'cat-bridal-sarees')!
+const catCotton = MOCK_CATEGORIES.find((c) => c.id === 'cat-cotton-sarees')!
+const catDesigner = MOCK_CATEGORIES.find((c) => c.id === 'cat-designer-sarees')!
+const catNecklace = MOCK_CATEGORIES.find((c) => c.id === 'cat-necklaces')!
+const catEarrings = MOCK_CATEGORIES.find((c) => c.id === 'cat-earrings')!
+const catBangles = MOCK_CATEGORIES.find((c) => c.id === 'cat-bangles')!
+const catBridalJwl = MOCK_CATEGORIES.find((c) => c.id === 'cat-bridal-jwl')!
+const catTemple = MOCK_CATEGORIES.find((c) => c.id === 'cat-temple-jwl')!
+
+export const MOCK_PRODUCTS: Product[] = [
+  // ── Sarees ──────────────────────────────────────────────────────────────
+
+  {
+    id: 'p-kanchi-bridal-gold',
+    title: 'Kanjivaram Bridal Gold Silk Saree',
+    description: 'Opulent pure Kanjivaram silk saree in rich crimson with traditional gold zari border. Perfect for weddings and grand occasions.',
+    type: 'saree',
+    base_price: 24500,
+    discount_pct: 15,
+    published: true,
+    created_at: '2025-12-10T00:00:00Z',
+    category: catKanchi,
+    fabric: 'Pure Silk',
+    color: 'Crimson Red',
+    occasion: 'wedding',
+    blouse_included: true,
+    images: [img('photo-1610030469983-98e550d6193c')],
+    variants: [{ id: 'v1', color: 'Crimson Red', size: 'Free Size', quantity: 12, sold_count: 38, sku: 'KBS-001-CR' }],
+  },
+
+  {
+    id: 'p-banarasi-silk',
+    title: 'Banarasi Pure Silk Saree — Maroon',
+    description: 'Authentic Banarasi pure silk with intricate woven motifs and a stunning antique gold border. A timeless heirloom piece.',
+    type: 'saree',
+    base_price: 18500,
+    discount_pct: 10,
+    published: true,
+    created_at: '2025-11-28T00:00:00Z',
+    category: catBridalSaree,
+    fabric: 'Pure Silk',
+    color: 'Maroon',
+    occasion: 'wedding',
+    blouse_included: true,
+    images: [img('photo-1583391733956-6c78276477e2')],
+    variants: [{ id: 'v2', color: 'Maroon', size: 'Free Size', quantity: 8, sold_count: 55, sku: 'BPS-002-MR' }],
+  },
+
+  {
+    id: 'p-pochampally-ikat',
+    title: 'Pochampally Ikat Silk Saree — Teal',
+    description: 'Handwoven Pochampally double Ikat silk in vibrant teal with geometric patterns. A weaver\'s masterpiece.',
+    type: 'saree',
+    base_price: 8500,
+    discount_pct: 5,
+    published: true,
+    created_at: '2025-12-01T00:00:00Z',
+    category: catKanchi,
+    fabric: 'Silk',
+    color: 'Teal',
+    occasion: 'festival',
+    blouse_included: false,
+    images: [img('photo-1617627143750-d86bc21e42bb')],
+    variants: [{ id: 'v3', color: 'Teal', size: 'Free Size', quantity: 20, sold_count: 29, sku: 'PIK-003-TL' }],
+  },
+
+  {
+    id: 'p-kasavu-kerala',
+    title: 'Kasavu Kerala Cotton Saree',
+    description: 'Classic Kerala Kasavu saree in pristine off-white with gold kasavu border — the epitome of understated elegance.',
+    type: 'saree',
+    base_price: 3800,
+    discount_pct: 0,
+    published: true,
+    created_at: '2025-12-05T00:00:00Z',
+    category: catCotton,
+    fabric: 'Cotton',
+    color: 'Off-White',
+    occasion: 'festival',
+    blouse_included: false,
+    images: [img('photo-1595777457583-95e059d581b8')],
+    variants: [{ id: 'v4', color: 'Off-White', size: 'Free Size', quantity: 35, sold_count: 22, sku: 'KKC-004-OW' }],
+  },
+
+  {
+    id: 'p-chanderi-silk-cotton',
+    title: 'Chanderi Silk-Cotton Saree — Sage Green',
+    description: 'Sheer Chanderi silk-cotton in delicate sage green with woven butis. Light, breezy and graceful for all seasons.',
+    type: 'saree',
+    base_price: 5400,
+    discount_pct: 12,
+    published: true,
+    created_at: '2025-11-15T00:00:00Z',
+    category: catDesigner,
+    fabric: 'Silk-Cotton',
+    color: 'Sage Green',
+    occasion: 'casual',
+    blouse_included: false,
+    images: [img('photo-1610030469983-98e550d6193c', 800)],
+    variants: [{ id: 'v5', color: 'Sage Green', size: 'Free Size', quantity: 18, sold_count: 17, sku: 'CSC-005-SG' }],
+  },
+
+  {
+    id: 'p-mysore-crepe-silk',
+    title: 'Mysore Crepe Silk Saree — Lavender',
+    description: 'Lightweight Mysore crepe silk in a dreamy lavender with delicate silver zari. Ideal for cocktails and evening events.',
+    type: 'saree',
+    base_price: 6200,
+    discount_pct: 8,
+    published: true,
+    created_at: '2025-12-08T00:00:00Z',
+    category: catDesigner,
+    fabric: 'Crepe Silk',
+    color: 'Lavender',
+    occasion: 'casual',
+    blouse_included: true,
+    images: [img('photo-1583391733956-6c78276477e2', 800)],
+    variants: [{ id: 'v6', color: 'Lavender', size: 'Free Size', quantity: 14, sold_count: 11, sku: 'MCS-006-LV' }],
+  },
+
+  {
+    id: 'p-uppada-silk',
+    title: 'Uppada Jamdani Silk Saree — Pink',
+    description: 'Rare Uppada Jamdani silk from Andhra Pradesh in blush pink with fine thread work. A collector\'s pride.',
+    type: 'saree',
+    base_price: 12000,
+    discount_pct: 0,
+    published: true,
+    created_at: '2025-12-12T00:00:00Z',
+    category: catBridalSaree,
+    fabric: 'Pure Silk',
+    color: 'Blush Pink',
+    occasion: 'wedding',
+    blouse_included: true,
+    images: [img('photo-1617627143750-d86bc21e42bb', 800)],
+    variants: [{ id: 'v7', color: 'Blush Pink', size: 'Free Size', quantity: 6, sold_count: 42, sku: 'UJS-007-PK' }],
+  },
+
+  {
+    id: 'p-kota-doria',
+    title: 'Kota Doria Cotton-Silk Saree — Yellow',
+    description: 'Feather-light Kota Doria saree in sunny yellow with tiny chequered weave. Perfect for summer days.',
+    type: 'saree',
+    base_price: 4200,
+    discount_pct: 0,
+    published: true,
+    created_at: '2025-11-20T00:00:00Z',
+    category: catCotton,
+    fabric: 'Cotton-Silk',
+    color: 'Yellow',
+    occasion: 'casual',
+    blouse_included: false,
+    images: [img('photo-1595777457583-95e059d581b8', 800)],
+    variants: [{ id: 'v8', color: 'Yellow', size: 'Free Size', quantity: 25, sold_count: 14, sku: 'KDS-008-YL' }],
+  },
+
+  // ── Jewellery ────────────────────────────────────────────────────────────
+
+  {
+    id: 'p-temple-necklace-set',
+    title: 'Lakshmi Temple Gold Necklace Set',
+    description: 'Exquisite Lakshmi temple necklace set with matching earrings in antique gold finish. Handcrafted by master artisans.',
+    type: 'jewellery',
+    base_price: 28000,
+    discount_pct: 0,
+    published: true,
+    created_at: '2025-12-03T00:00:00Z',
+    category: catNecklace,
+    material: 'Antique Gold',
+    weight: '145g',
+    jewellery_type: 'Necklace Set',
+    occasion: 'wedding',
+    images: [img('photo-1602173574767-37ac01994b2a')],
+    variants: [{ id: 'v9', color: 'Antique Gold', size: 'Standard', quantity: 5, sold_count: 18, sku: 'TNS-001-AG' }],
+  },
+
+  {
+    id: 'p-jhumka-earrings',
+    title: 'Antique Gold Jhumka Earrings',
+    description: 'Traditional Jhumka earrings with intricate filigree work and stone embellishments. A timeless heritage design.',
+    type: 'jewellery',
+    base_price: 4500,
+    discount_pct: 10,
+    published: true,
+    created_at: '2025-12-07T00:00:00Z',
+    category: catEarrings,
+    material: 'Antique Gold',
+    weight: '18g',
+    jewellery_type: 'Earrings',
+    occasion: 'festival',
+    images: [img('photo-1535632066927-ab7c9ab60908')],
+    variants: [{ id: 'v10', color: 'Antique Gold', size: 'Standard', quantity: 22, sold_count: 34, sku: 'AGJ-002-AG' }],
+  },
+
+  {
+    id: 'p-gold-bangles-set',
+    title: 'Bridal Gold Bangles Set — 2.4 Size',
+    description: 'Set of 6 gold bangles with intricate engravings. A must-have for any bridal trousseau.',
+    type: 'jewellery',
+    base_price: 15000,
+    discount_pct: 5,
+    published: true,
+    created_at: '2025-11-25T00:00:00Z',
+    category: catBangles,
+    material: 'Gold',
+    weight: '72g',
+    jewellery_type: 'Bangles',
+    occasion: 'wedding',
+    images: [img('photo-1611591437281-460bfbe1220a')],
+    variants: [
+      { id: 'v11a', color: 'Gold', size: '2.4', quantity: 10, sold_count: 28, sku: 'BGB-003-24' },
+      { id: 'v11b', color: 'Gold', size: '2.6', quantity: 8, sold_count: 21, sku: 'BGB-003-26' },
+      { id: 'v11c', color: 'Gold', size: '2.8', quantity: 6, sold_count: 15, sku: 'BGB-003-28' },
+    ],
+  },
+
+  {
+    id: 'p-bridal-jwl-set',
+    title: 'Royal Bridal Jewellery Set — 7 Pieces',
+    description: 'Complete bridal set with necklace, earrings, maang tikka, nose ring, two bangles, and waistband. Antique gold with kundan stones.',
+    type: 'jewellery',
+    base_price: 65000,
+    discount_pct: 8,
+    coupon_code: 'BRIDAL10',
+    coupon_disc: 10,
+    published: true,
+    created_at: '2025-12-11T00:00:00Z',
+    category: catBridalJwl,
+    material: 'Antique Gold with Kundan',
+    weight: '380g',
+    jewellery_type: 'Bridal Set',
+    occasion: 'wedding',
+    images: [img('photo-1602173574767-37ac01994b2a', 800)],
+    variants: [{ id: 'v12', color: 'Antique Gold', size: 'Standard', quantity: 3, sold_count: 7, sku: 'BJS-004-AG' }],
+  },
+
+  {
+    id: 'p-temple-pendant',
+    title: 'Goddess Saraswati Temple Pendant',
+    description: 'Sacred Saraswati pendant in antique gold with fine deity carving. Comes with a gold-plated chain.',
+    type: 'jewellery',
+    base_price: 7800,
+    discount_pct: 0,
+    published: true,
+    created_at: '2025-11-30T00:00:00Z',
+    category: catTemple,
+    material: 'Antique Gold',
+    weight: '22g',
+    jewellery_type: 'Pendant',
+    occasion: 'temple',
+    images: [img('photo-1599643478518-a784e5dc4c8f')],
+    variants: [{ id: 'v13', color: 'Antique Gold', size: 'Standard', quantity: 15, sold_count: 23, sku: 'TMP-005-AG' }],
+  },
+]

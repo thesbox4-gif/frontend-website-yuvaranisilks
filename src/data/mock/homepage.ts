@@ -1,0 +1,66 @@
+import type { HomepageSettings } from '@/types'
+
+export const MOCK_HOMEPAGE_SETTINGS: HomepageSettings = {
+  sections: [
+    {
+      id: 'section-new-arrivals',
+      type: 'new_arrivals',
+      title: 'New Arrivals',
+      subtitle: 'Fresh From The Loom',
+      active: true,
+      display_order: 1,
+    },
+    {
+      id: 'section-featured-sarees',
+      type: 'featured_sarees',
+      title: 'Saree Collection',
+      subtitle: 'Timeless Silk Weaves',
+      active: true,
+      display_order: 2,
+    },
+    {
+      id: 'section-featured-jewellery',
+      type: 'featured_jewellery',
+      title: 'Fine Jewellery',
+      subtitle: 'Temple & Antique Gold',
+      active: true,
+      display_order: 3,
+    },
+    {
+      id: 'section-wedding-collection',
+      type: 'wedding_collection',
+      title: 'Wedding Collection',
+      subtitle: 'Bridal Essentials',
+      active: true,
+      display_order: 4,
+    },
+    {
+      id: 'section-trending',
+      type: 'trending',
+      title: 'Trending Now',
+      subtitle: 'Most Loved Picks',
+      product_ids: [],
+      active: true,
+      display_order: 5,
+    },
+    {
+      id: 'section-best-sellers',
+      type: 'best_sellers',
+      title: 'Best Sellers',
+      subtitle: 'Customer Favourites',
+      product_ids: [],
+      active: true,
+      display_order: 6,
+    },
+    {
+      id: 'section-promo-banner',
+      type: 'promo_banner',
+      title: 'Grand Festive Sale',
+      subtitle: '',
+      banner_image_url: '',
+      banner_link: '/products',
+      active: false,
+      display_order: 7,
+    },
+  ],
+}

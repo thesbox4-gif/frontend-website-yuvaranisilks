@@ -17,11 +17,11 @@ export interface ProductImage {
 }
 
 export interface Variant {
-  id: string
+  id?: string
   color: string
   size: string
   quantity: number
-  sold_count: number
+  sold_count?: number
   sku: string
   image_url?: string
 }
@@ -33,6 +33,8 @@ export interface Category {
   image_url?: string
   description?: string
   parent_id?: string | null
+  display_order?: number
+  active?: boolean
 }
 
 export interface Product {
@@ -49,6 +51,17 @@ export interface Product {
   category?: Category
   images: ProductImage[]
   variants: Variant[]
+
+  // Saree-specific attributes
+  fabric?: string
+  color?: string
+  occasion?: string
+  blouse_included?: boolean
+
+  // Jewellery-specific attributes
+  material?: string
+  weight?: string
+  jewellery_type?: string
 }
 
 export interface OrderItem {
@@ -91,4 +104,80 @@ export interface Order {
     pincode: string
   }
   order_items: OrderItem[]
+}
+
+// ─── Banner ──────────────────────────────────────────────────────────────────
+
+export interface Banner {
+  id: string
+  title: string
+  subtitle: string
+  description: string
+  cta_text: string
+  cta_href: string
+  image_url: string
+  display_order: number
+  active: boolean
+}
+
+// ─── Homepage ─────────────────────────────────────────────────────────────────
+
+export type HomepageSectionType =
+  | 'new_arrivals'
+  | 'trending'
+  | 'best_sellers'
+  | 'promo_banner'
+  | 'featured_categories'
+  | 'featured_sarees'
+  | 'featured_jewellery'
+  | 'wedding_collection'
+
+export interface HomepageSection {
+  id: string
+  type: HomepageSectionType
+  title: string
+  subtitle?: string
+  /** For product sections: specific product IDs chosen by admin */
+  product_ids?: string[]
+  /** For promo_banner sections: image URL */
+  banner_image_url?: string
+  /** For promo_banner sections: link when clicked */
+  banner_link?: string
+  /** For featured_categories: category IDs to highlight */
+  category_ids?: string[]
+  active: boolean
+  display_order: number
+}
+
+export interface HomepageSettings {
+  sections: HomepageSection[]
+}
+
+// ─── Admin ────────────────────────────────────────────────────────────────────
+
+export interface AdminStats {
+  total_orders: number
+  total_revenue: number
+  total_products: number
+  total_customers: number
+  orders_today: number
+  revenue_today: number
+  pending_orders: number
+  low_stock_products: number
+}
+
+export interface Customer {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  role: string
+  created_at: string
+  total_orders?: number
+  total_spent?: number
+}
+
+export interface UploadResponse {
+  url: string
+  filename: string
 }

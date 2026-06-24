@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import Link from 'next/link'
 import { api } from '@/lib/api'
-import { HeroSlider } from '@/components/shop/hero-slider'
+import { HeroVideo } from '@/components/shop/HeroVideo'
 import { CategoryShowcase } from '@/components/shop/CategoryShowcase'
+import { HomepageSectionsLoader } from '@/components/shop/HomepageSectionsLoader'
+import { LiveVideoBooking } from '@/components/shop/LiveVideoBooking'
 import type { Product, Category } from '@/types'
 import { ChevronRight, Sparkles, Truck, Shield, RotateCcw } from 'lucide-react'
+import { BRAND } from '@/lib/brand'
+import { MOCK_CATEGORIES } from '@/data/mock/categories'
+import { MOCK_PRODUCTS } from '@/data/mock/products'
 
 async function getHomeData() {
   try {
@@ -13,11 +18,11 @@ async function getHomeData() {
       api.get<Category[]>('/api/categories'),
     ])
     return {
-      products: productsRes.data ?? [],
-      categories: categoriesRes ?? [],
+      products: productsRes.data?.length ? productsRes.data : MOCK_PRODUCTS,
+      categories: categoriesRes?.length ? categoriesRes : MOCK_CATEGORIES,
     }
   } catch {
-    return { products: [], categories: [] }
+    return { products: MOCK_PRODUCTS, categories: MOCK_CATEGORIES }
   }
 }
 
@@ -26,8 +31,8 @@ export default async function HomePage() {
 
   return (
     <div className="pb-12 w-full min-w-0 overflow-x-hidden">
-      {/* Luxury Hero Slider Section */}
-      <HeroSlider />
+      {/* Hero Video — full-screen video with Ken Burns motion */}
+      <HeroVideo />
 
       {/* Trust Badges */}
       <div className="bg-white border-y border-neutral-100 relative z-25">
@@ -56,8 +61,16 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Category Wise Product Showcase */}
+      {/* Category Showcase — all root categories from API */}
       <CategoryShowcase products={products} categories={categories} />
+
+      {/* Dynamic Homepage Sections — New Arrivals, Trending, Best Sellers, Promo Banners */}
+      <Suspense fallback={null}>
+        <HomepageSectionsLoader />
+      </Suspense>
+
+      {/* Live Video Shopping Booking */}
+      <LiveVideoBooking />
 
       {/* Banner CTA */}
       <section className="relative bg-[var(--color-ink)] text-white mt-12 overflow-hidden">
@@ -65,14 +78,14 @@ export default async function HomePage() {
         <div className="absolute -bottom-28 -right-20 h-80 w-80 rounded-full bg-[var(--color-gold)]/10 blur-3xl" />
         <div className="relative page-container py-14 sm:py-20 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-gold)]">
-            The Yuvarani Silks Edit
+            The {BRAND.name} Edit
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold font-[var(--font-display)] mt-3 mb-4">
             Explore Our Full Heritage Collection
           </h2>
           <p className="text-white/55 mb-9 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-            Over 500 styles of traditional silk sarees, designer ensembles, and temple
-            gold jewellery — secure payments and swift delivery, every time.
+            Traditional silk sarees, designer ensembles, and temple gold jewellery —
+            secure payments and swift delivery, every time.
           </p>
           <Link
             href="/products"
@@ -85,4 +98,3 @@ export default async function HomePage() {
     </div>
   )
 }
-
