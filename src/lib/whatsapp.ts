@@ -9,11 +9,21 @@ export function waUrl(message: string): string {
 export const WA_CATALOGUE_MSG =
   'Hi Yuvarani Silks, I would like to view your latest saree and jewellery catalogue.'
 
-export function waProductMsg(title: string, price: string, url: string): string {
+export function waProductMsg(
+  title: string,
+  price: string,
+  url: string,
+  imageUrl?: string,
+  productId?: string,
+): string {
   return (
-    `Hi Yuvarani Silks! 🙏\n\n` +
-    `I'm interested in:\n*${title}*\nPrice: ${price}\n\n` +
-    `Product link: ${url}\n\n` +
-    `Could you please share more details and availability?`
+    `Hi Yuvarani Silks,\n\n` +
+    `I am interested in this product:\n\n` +
+    `Product: ${title}\n` +
+    (productId ? `Product ID: ${productId}\n` : '') +
+    `Price: ${price}\n` +
+    `Product Link: ${url}\n` +
+    (imageUrl ? `Image: ${imageUrl}\n` : '') +
+    `\nPlease provide more details.`
   )
 }

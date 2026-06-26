@@ -1,5 +1,6 @@
 import { api } from '@/lib/api'
 import type { Product } from '@/types'
+import { NEW_ARRIVALS_DAYS } from '@/lib/utils'
 import { MOCK_PRODUCTS } from '@/data/mock/products'
 
 function applyMockFilters(filters: ProductFilters): ProductsResponse {
@@ -82,10 +83,22 @@ export const productService = {
     }
   },
 
-  /** Fetch N newest products. */
-  async getNewArrivals(limit = 8): Promise<Product[]> {
-    const res = await this.getMany({ sort: 'newest', limit, published: true })
-    return res.data
+  /** Fetch newest products within the configured time window.
+   *  `days` defaults to NEW_ARRIVALS_DAYS (30). Fetches a larger batch then
+   *  filters client-side so every newly added product appears automatically.
+   *  Graceful fallback: if nothing falls within the window, returns the most
+   *  recently created products so the section is never empty. */
+  async getNewArrivals(limit = 8, days = NEW_ARRIVALS_DAYS): Promise<Product[]> {
+    const fetchLimit = Math.max(limit * 4, 32)
+    const res = await this.getMany({ sort: 'newest', limit: fetchLimit, published: true })
+    const all = res.data
+
+    const cutoff = Date.now() - days * 86_400_000
+    const inWindow = all.filter(
+      (p) => p.created_at && new Date(p.created_at).getTime() >= cutoff
+    )
+
+    return (inWindow.length > 0 ? inWindow : all).slice(0, limit)
   },
 
   /** Fetch trending products (most sold). */

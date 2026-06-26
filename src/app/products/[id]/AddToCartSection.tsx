@@ -30,8 +30,11 @@ export function AddToCartSection({ product }: AddToCartSectionProps) {
   const isWishlisted = productIds.includes(product.id)
   const selectedColor = selectedVariant?.color ?? null
   const finalPrice = discountedPrice(product.base_price, product.discount_pct)
+  const isSoldOut =
+    (product.variants?.length ?? 0) > 0 &&
+    product.variants.every((v) => (v.quantity ?? 0) === 0)
   const canAdd =
-    !addingToCart && selectedVariant && (selectedVariant.quantity ?? 0) > 0
+    !addingToCart && !isSoldOut && selectedVariant && (selectedVariant.quantity ?? 0) > 0
 
   function selectVariant(variant: Variant) {
     setSelectedVariant(variant)
@@ -92,6 +95,14 @@ export function AddToCartSection({ product }: AddToCartSectionProps) {
   return (
     <>
     <div className="space-y-5 pb-24 lg:pb-0">
+      {/* Sold-out badge */}
+      {isSoldOut && (
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200">
+          <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
+          <span className="text-xs font-bold text-red-600 uppercase tracking-[0.14em]">Sold Out</span>
+        </div>
+      )}
+
       {/* Color selector */}
       {product.variants && product.variants.length > 0 && (
         <ColorSwatchSelector
@@ -148,15 +159,15 @@ export function AddToCartSection({ product }: AddToCartSectionProps) {
       <div className="flex flex-col sm:flex-row gap-3 pt-1">
         <button
           onClick={handleAddToCart}
-          disabled={addingToCart || !selectedVariant || (selectedVariant?.quantity ?? 0) === 0}
+          disabled={addingToCart || isSoldOut || !selectedVariant || (selectedVariant?.quantity ?? 0) === 0}
           className={cn(
             'flex-1 flex items-center justify-center gap-2 py-4 min-h-[52px] rounded-full text-sm font-bold text-white transition-all w-full sm:w-auto',
-            'bg-ink hover:bg-brand',
+            isSoldOut ? 'bg-neutral-400 cursor-not-allowed' : 'bg-ink hover:bg-brand',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
           <ShoppingCart className="h-4 w-4" />
-          {addingToCart ? 'Adding...' : 'Add to Bag'}
+          {addingToCart ? 'Adding...' : isSoldOut ? 'Sold Out' : 'Add to Bag'}
         </button>
 
         <button
@@ -172,6 +183,12 @@ export function AddToCartSection({ product }: AddToCartSectionProps) {
           <Heart className={cn('h-5 w-5', isWishlisted && 'fill-current')} />
         </button>
       </div>
+      {/* Sold-out message */}
+      {isSoldOut && (
+        <p className="text-sm text-neutral-500 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3.5 leading-relaxed">
+          Thank you for shopping with Yuvarani Silks. This product is currently sold out. Please explore our latest collections.
+        </p>
+      )}
     </div>
 
     {/* Myntra-style sticky bar — mobile only */}
@@ -188,11 +205,12 @@ export function AddToCartSection({ product }: AddToCartSectionProps) {
           disabled={!canAdd}
           className={cn(
             'flex-1 flex items-center justify-center gap-2 py-3.5 min-h-[48px] rounded-full text-sm font-bold text-white',
-            'bg-ink hover:bg-brand disabled:opacity-50 disabled:cursor-not-allowed'
+            isSoldOut ? 'bg-neutral-400 cursor-not-allowed' : 'bg-ink hover:bg-brand',
+            'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
           <ShoppingCart className="h-4 w-4" />
-          {addingToCart ? 'Adding...' : 'Add to Bag'}
+          {addingToCart ? 'Adding...' : isSoldOut ? 'Sold Out' : 'Add to Bag'}
         </button>
         <button
           onClick={handleWishlistToggle}

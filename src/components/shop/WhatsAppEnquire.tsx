@@ -20,16 +20,19 @@ interface Props {
 export function WhatsAppEnquire({ product }: Props) {
   const finalPrice = discountedPrice(product.base_price, product.discount_pct)
   const priceStr   = formatPrice(finalPrice)
+  const imageUrl   = product.images?.find((img) => img.is_primary)?.url ?? product.images?.[0]?.url
 
   /* Use a relative path for SSR + initial hydration, then swap to the full
      origin after mount so both passes produce an identical href. */
   const relativePath = `/products/${product.id}`
-  const [href, setHref] = useState(waUrl(waProductMsg(product.title, priceStr, relativePath)))
+  const [href, setHref] = useState(
+    waUrl(waProductMsg(product.title, priceStr, relativePath, imageUrl, product.id))
+  )
 
   useEffect(() => {
     const fullUrl = `${window.location.origin}${relativePath}`
-    setHref(waUrl(waProductMsg(product.title, priceStr, fullUrl)))
-  }, [product.id, product.title, priceStr, relativePath])
+    setHref(waUrl(waProductMsg(product.title, priceStr, fullUrl, imageUrl, product.id)))
+  }, [product.id, product.title, priceStr, relativePath, imageUrl])
 
   return (
     <a

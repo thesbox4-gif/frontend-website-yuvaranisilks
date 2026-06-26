@@ -7,6 +7,7 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 import type { Product, HomepageSection } from '@/types'
 import { productService } from '@/services/productService'
 import { ProductCard } from '@/components/shop/ProductCard'
+import { NEW_ARRIVALS_DAYS } from '@/lib/utils'
 
 // ─── Skeleton ────────────────────────────────────────────────────────────────
 
@@ -42,16 +43,19 @@ interface ProductSectionProps {
 function ProductSection({ section }: ProductSectionProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const isNewArrivals = section.type === 'new_arrivals'
+  const days = section.new_arrivals_days ?? NEW_ARRIVALS_DAYS
 
   useEffect(() => {
     let cancelled = false
     const limit = 8
 
+    const days = section.new_arrivals_days ?? NEW_ARRIVALS_DAYS
     const fetcher =
       section.product_ids && section.product_ids.length > 0
         ? productService.getByIds(section.product_ids)
         : section.type === 'new_arrivals'
-        ? productService.getNewArrivals(limit)
+        ? productService.getNewArrivals(limit, days)
         : section.type === 'trending'
         ? productService.getTrending(limit)
         : section.type === 'featured_sarees'
@@ -99,6 +103,11 @@ function ProductSection({ section }: ProductSectionProps) {
             <h2 className="text-2xl sm:text-3xl font-semibold text-ink font-display">
               {section.title}
             </h2>
+            {isNewArrivals && (
+              <p className="text-xs text-neutral-400 mt-1.5 font-medium">
+                Updated automatically · Showing products from the last {days} days
+              </p>
+            )}
           </div>
           <Link
             href={viewAllHref}

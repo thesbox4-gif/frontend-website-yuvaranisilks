@@ -145,6 +145,8 @@ export interface HomepageSection {
   banner_link?: string
   /** For featured_categories: category IDs to highlight */
   category_ids?: string[]
+  /** Override new-arrivals window in days. Backend-configurable; defaults to NEW_ARRIVALS_DAYS (30). */
+  new_arrivals_days?: number
   active: boolean
   display_order: number
 }

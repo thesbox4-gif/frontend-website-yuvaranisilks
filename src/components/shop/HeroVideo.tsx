@@ -82,7 +82,7 @@ export function HeroVideo() {
             {/* Eyebrow */}
             <p className="text-[var(--color-gold)] text-[9px] sm:text-[10.5px] font-semibold
                            uppercase tracking-[0.32em] mb-4 sm:mb-5">
-              {BRAND.name}&nbsp;&nbsp;·&nbsp;&nbsp;Heritage Since 1992
+              {BRAND.name}&nbsp;&nbsp;·&nbsp;&nbsp;Heritage Since 2026
             </p>
 
             {/* Gold rule */}

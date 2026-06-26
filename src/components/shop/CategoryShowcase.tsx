@@ -133,13 +133,14 @@ function CategorySection({ root, subs, products }: SectionProps) {
 }
 
 export function CategoryShowcase({ products, categories }: CategoryShowcaseProps) {
-  const rootCategories = useMemo(
-    () =>
-      categories
-        .filter((c) => !c.parent_id)
-        .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)),
-    [categories]
-  )
+  const rootCategories = useMemo(() => {
+    const hasSubsSet = new Set(
+      categories.filter((c) => c.parent_id).map((c) => c.parent_id as string)
+    )
+    return categories
+      .filter((c) => !c.parent_id && (hasSubsSet.has(c.id) || !!c.image_url))
+      .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+  }, [categories])
 
   if (!rootCategories.length) return null
 

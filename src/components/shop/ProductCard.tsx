@@ -7,7 +7,7 @@ import { Heart, ShoppingBag, Check } from 'lucide-react'
 import { useWishlistStore } from '@/store/wishlistStore'
 import { useCartStore, type CartItem } from '@/store/cartStore'
 import { useAuthStore } from '@/store/authStore'
-import { formatPrice, discountedPrice, cn } from '@/lib/utils'
+import { formatPrice, discountedPrice, cn, isNewProduct } from '@/lib/utils'
 import { toast } from '@/components/ui/Toaster'
 import { api } from '@/lib/api'
 import { ProductImageFrame } from './ProductImageFrame'
@@ -105,6 +105,11 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-wrap gap-1 max-w-[70%] z-10">
+            {isNewProduct(product.created_at) && inStock && (
+              <span className="bg-emerald-500 text-white text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full uppercase">
+                NEW
+              </span>
+            )}
             {hasDiscount && (
               <span className="bg-brand text-white text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full uppercase">
                 {product.discount_pct}% OFF
