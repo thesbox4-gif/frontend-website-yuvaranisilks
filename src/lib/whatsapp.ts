@@ -1,5 +1,5 @@
 /** Phone number in international format without + or spaces */
-export const WA_NUMBER = '918498837027'
+export const WA_NUMBER = '919160065456'
 
 /** Build a wa.me deep-link. Works on mobile (native app) and desktop (web.whatsapp.com). */
 export function waUrl(message: string): string {
