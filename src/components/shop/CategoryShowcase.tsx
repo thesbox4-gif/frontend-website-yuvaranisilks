@@ -133,30 +133,42 @@ function CategorySection({ root, subs, products }: SectionProps) {
 }
 
 export function CategoryShowcase({ products, categories }: CategoryShowcaseProps) {
+  // Only surface categories that actually contain a (published) product. This hides
+  // empty category "shells" left behind after their products were deleted, so the
+  // storefront never shows a sub-category a shopper can't buy anything from.
+  const catsWithProducts = useMemo(
+    () => new Set(products.map((p) => p.category?.id).filter(Boolean) as string[]),
+    [products]
+  )
+
+  const nonEmptySubsOf = (rootId: string) =>
+    categories.filter((c) => c.parent_id === rootId && catsWithProducts.has(c.id))
+
   const rootCategories = useMemo(() => {
-    const hasSubsSet = new Set(
-      categories.filter((c) => c.parent_id).map((c) => c.parent_id as string)
-    )
     return categories
-      .filter((c) => !c.parent_id && (hasSubsSet.has(c.id) || !!c.image_url))
+      .filter((c) => !c.parent_id)
+      .filter(
+        (root) =>
+          nonEmptySubsOf(root.id).length > 0 ||
+          catsWithProducts.has(root.id) ||
+          !!root.image_url
+      )
       .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
-  }, [categories])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories, catsWithProducts])
 
   if (!rootCategories.length) return null
 
   return (
     <div className="bg-white">
-      {rootCategories.map((root) => {
-        const subs = categories.filter((c) => c.parent_id === root.id)
-        return (
-          <CategorySection
-            key={root.id}
-            root={root}
-            subs={subs}
-            products={products}
-          />
-        )
-      })}
+      {rootCategories.map((root) => (
+        <CategorySection
+          key={root.id}
+          root={root}
+          subs={nonEmptySubsOf(root.id)}
+          products={products}
+        />
+      ))}
     </div>
   )
 }
